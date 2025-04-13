@@ -24,9 +24,11 @@ public class Room {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    private String name;
+    private String title;
     private String description;
-    private Double price;
+    private Double pricePerNight;
+    private int maxGuests;
+    private int nrOfRooms;
     private String location;
     
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)

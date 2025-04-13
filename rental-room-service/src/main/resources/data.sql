@@ -1,8 +1,8 @@
 -- Wstawianie przykładowych pokoi
-INSERT INTO rooms (name, description, price, location) VALUES
-('Apartament z widokiem na morze', 'Piękny apartament z bezpośrednim widokiem na Morze Bałtyckie', 350.00, 'Gdańsk'),
-('Przytulne studio w centrum', 'Nowoczesne studio w samym centrum miasta, blisko atrakcji', 220.00, 'Warszawa'),
-('Domek w górach', 'Drewniany domek z kominkiem i widokiem na góry', 280.00, 'Zakopane');
+INSERT INTO rooms (title, description, price_per_night, max_guests, nr_of_rooms, location) VALUES
+('Apartament z widokiem na morze', 'Piękny apartament z bezpośrednim widokiem na Morze Bałtyckie', 350.00, 4, 2, 'Gdańsk'),
+('Przytulne studio w centrum', 'Nowoczesne studio w samym centrum miasta, blisko atrakcji', 220.00, 2, 1, 'Warszawa'),
+('Domek w górach', 'Drewniany domek z kominkiem i widokiem na góry', 280.00, 6, 2, 'Zakopane');
 
 -- Wstawianie przykładowych rezerwacji
 INSERT INTO reservations (room_id, guest_name, guest_email, check_in_date, check_out_date, status, total_price) VALUES 

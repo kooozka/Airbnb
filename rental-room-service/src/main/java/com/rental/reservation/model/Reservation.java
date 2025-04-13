@@ -39,7 +39,7 @@ public class Reservation {
     public void calculateTotalPrice() {
         if (room != null && checkInDate != null && checkOutDate != null) {
             long daysOfStay = checkOutDate.toEpochDay() - checkInDate.toEpochDay();
-            this.totalPrice = room.getPrice() * daysOfStay;
+            this.totalPrice = room.getPricePerNight() * daysOfStay;
         }
     }
 }
