@@ -1,0 +1,138 @@
+{
+  "$schema": "https://www.krakend.io/schema/v2.9/krakend.json",
+  "version": 3,
+  "name": "Airbnb API Gateway",
+  "port": 8000,
+  "cache_ttl": "300s",
+  "timeout": "3000ms",
+  "extra_config": {
+    "telemetry/logging": {
+      "level": "DEBUG",
+      "prefix": "[KRAKEND]",
+      "syslog": false,
+      "stdout": true
+    },
+    "router": {
+      "return_error_msg": true
+    }
+  },
+  "endpoints": [
+    {      
+      "endpoint": "/rooms",
+      "method": "GET",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/api/rooms",
+          "host": ["http://rental-room-service:8081"],
+          "encoding": "json",
+          "method": "GET",
+          "is_collection": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/rooms/available",
+      "method": "GET",
+      "input_query_strings": ["checkIn", "checkOut"],
+      "output_encoding": "json",
+      "backend": [
+        {          
+          "url_pattern": "/api/rooms/available",
+          "host": ["http://rental-room-service:8081"],
+          "encoding": "json",
+          "method": "GET",
+          "group": "rooms",
+          "mapping": {
+            "checkIn": "$.checkIn",
+            "checkOut": "$.checkOut"
+          },
+          "deny": [
+            "checkIn",
+            "checkOut"
+          ],
+          "input_query_strings": ["checkIn", "checkOut"],
+          "is_collection": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/reservations",
+      "method": "GET",
+      "output_encoding": "json",
+      "backend": [
+        {          
+          "url_pattern": "/api/reservations",
+          "host": ["http://rental-room-service:8081"],
+          "encoding": "json",
+          "method": "GET",
+          "is_collection": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/reservations/{id}",
+      "method": "GET",
+      "output_encoding": "json",
+      "backend": [
+        {          
+          "url_pattern": "/api/reservations/{id}",
+          "host": ["http://rental-room-service:8081"],
+          "encoding": "json",
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "endpoint": "/reservations/room/{id}",
+      "method": "GET",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/api/reservations/room/{id}",
+          "host": ["http://rental-room-service:8081"],
+          "encoding": "json",
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "endpoint": "/reservations/room/{id}",
+      "method": "POST",
+      "output_encoding": "json",
+      "input_headers": ["Content-Type"],
+      "backend": [
+        {
+          "url_pattern": "/api/reservations/room/{id}",
+          "host": ["http://rental-room-service:8081"],
+          "encoding": "json",
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "endpoint": "/reservations/room/{id}/availability",
+      "method": "GET",
+      "input_query_strings": ["checkIn", "checkOut"],
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/api/reservations/room/{id}/availability",
+          "host": ["http://rental-room-service:8081"],
+          "encoding": "json",
+          "method": "GET",
+          "group": "availability",
+          "mapping": {
+            "checkIn": "$.checkIn",
+            "checkOut": "$.checkOut"
+          },
+          "deny": [
+            "checkIn",
+            "checkOut"
+          ],
+          "input_query_strings": ["checkIn", "checkOut"]
+        }
+      ]
+    }
+  ]
+}
