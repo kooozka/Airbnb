@@ -1,4 +1,7 @@
 version: '3'
+networks:
+  krakend-net:
+    driver: bridge
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.0
@@ -18,3 +21,29 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+  # KrakenD API Gateway
+  krakend:
+    image: devopsfaith/krakend:latest
+    container_name: krakend
+    volumes:
+      - ./krakend.json:/etc/krakend/krakend.json
+    ports:
+      - "8000:8000"
+    restart: always
+    networks:
+      - krakend-net
+    depends_on:
+      - rental-room-service
+    environment:
+      - KRAKEND_PORT=8000
+  # Rental Room Service
+  rental-room-service:
+    build:
+      context: ./rental-room-service
+      dockerfile: Dockerfile
+    container_name: rental-room-service
+    ports:
+      - "8081:8081"
+    restart: always
+    networks:
+      - krakend-net
