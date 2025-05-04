@@ -38,7 +38,7 @@
 1. **application.properties**
    Kafka jest skonfigurowana w application.properties. 
    Są tam ustawione Serializery i Deserializery. U nas klucz jest Stringiem, a wartość JSONem, stąd StringSerializer i JsonSerizalizer
-   Oprócz tego ustawiamy trusted.packages, czyli mówimy Kafce z jakich paczek może deserializować obiekty: u nas to com.airbnb.shared-events
+   Oprócz tego ustawiamy trusted.packages, czyli mówimy Kafce z jakich paczek może deserializować obiekty: u nas to com.airbnb.events
 
 2. **shared-events**
    Eventy muszą być utworzone w module shared-events w folderze events
