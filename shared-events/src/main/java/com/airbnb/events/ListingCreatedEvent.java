@@ -1,4 +1,4 @@
-package com.listing.dto.event;
+package com.airbnb.events;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

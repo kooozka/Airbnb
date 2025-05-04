@@ -1,5 +1,6 @@
 package com.rental.reservation.controller;
 
+import com.rental.reservation.enums.CancellerType;
 import com.rental.reservation.dto.ReservationCreateDTO;
 import com.rental.reservation.model.Reservation;
 import com.rental.reservation.service.ReservationService;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.management.InstanceNotFoundException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -72,6 +74,12 @@ public class ReservationController {
         return ResponseEntity.ok().body(
             new AvailabilityResponse(roomId, checkIn, checkOut, isAvailable)
         );
+    }
+
+    @PostMapping("/cancel/{id}")
+    public ResponseEntity<Long> cancelReservation(@PathVariable Long id, @RequestParam CancellerType cancellerType) throws InstanceNotFoundException {
+        reservationService.cancelReservation(id, cancellerType);
+        return ResponseEntity.ok(id);
     }
 
     @Getter

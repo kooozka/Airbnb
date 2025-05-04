@@ -32,3 +32,41 @@
      
 3. **Zrestartuj Krakend**  
    Po każdej zmianie w pliku krakend.json należy zrestartować usługę Krakend, aby nowe endpointy były dostępne.
+
+# Konfiguracja Kafki
+
+1. **application.properties**
+   Kafka jest skonfigurowana w application.properties. 
+   Są tam ustawione Serializery i Deserializery. U nas klucz jest Stringiem, a wartość JSONem, stąd StringSerializer i JsonSerizalizer
+   Oprócz tego ustawiamy trusted.packages, czyli mówimy Kafce z jakich paczek może deserializować obiekty: u nas to com.airbnb.shared-events
+
+2. **shared-events**
+   Eventy muszą być utworzone w module shared-events w folderze events
+
+3. **Do pom.xml modułów wysyłających/odbierających eventy dodaj moduł shared-events**
+   ```xml
+   <dependency>
+   <groupId>com.airbnb</groupId>
+   <artifactId>shared-events</artifactId>
+   <version>1.0.0</version>
+   </dependency>
+   ```
+
+4. **Stwórz  klasę "...Event" w shared-events**
+   Niech ta klasa zawiera wszystkie atrybuty, które chcesz wysłać na Kafkę
+   Przykładowa klasa: ListingCreatedEvent
+
+5. **Stwórz w module wysyłającym klasę (jeśli jeszcze nie istnieje) "...Producer"
+   W tej klasie utwórz metodę send...Event do wysyłania eventu na Kafkę. Event ten to event z shared-events!
+   Jeden producer może zawierać wiele metod wysyłających eventy, ale można też mieć kilka producerów w jednym module.
+   Wedle uznania trzeba je sensownie pogrupować.
+   W miejscu, w którym chcesz wysłać event na Kafkę wywołaj tę metodę.
+   Przykładowa klasa: ListingProducer
+
+6. **Stwórz Listener w module nasłuchującym**
+   Tak samo jak w przypadku producera, jedna klasa typu Listener może nasłuchiwać wielu topiców, 
+   ale można też stworzyć wiele klas typu Listener, wedle uznania trzeba to sensownie podzielić
+   Przykładowa klasa: ListingListener
+
+7. uruchom Dockera
+   Plik docker-compose.yml uruchamia Kafkę, w application.properties jest zdefiniowany port na którym zostanie uruchomiona (9092)

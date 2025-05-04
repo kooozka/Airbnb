@@ -1,13 +1,19 @@
 package com.rental.reservation.service;
 
+import com.rental.reservation.enums.CancellerType;
+import com.rental.reservation.enums.ReservationStatus;
 import com.rental.reservation.model.Reservation;
+import com.rental.reservation.producer.ReservationEventsProducer;
 import com.rental.room.model.Room;
 import com.rental.reservation.repository.ReservationRepository;
 import com.rental.room.repository.RoomRepository;
+import com.airbnb.events.ReservationCancelledEvent;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import javax.management.InstanceNotFoundException;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,10 +22,20 @@ public class ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final RoomRepository roomRepository;
+    private final RefundServiceClient refundServiceClient;
+    private final RecommendationServiceClient recommendationServiceClient;
+    private final ReservationEventsProducer producer;
 
-    public ReservationService(ReservationRepository reservationRepository, RoomRepository roomRepository) {
+    public ReservationService(ReservationRepository reservationRepository,
+                              RoomRepository roomRepository,
+                              RefundServiceClient refundServiceClient,
+                              RecommendationServiceClient recommendationServiceClient,
+                              ReservationEventsProducer producer) {
         this.reservationRepository = reservationRepository;
         this.roomRepository = roomRepository;
+        this.refundServiceClient = refundServiceClient;
+        this.recommendationServiceClient = recommendationServiceClient;
+        this.producer = producer;
     }
 
     public List<Reservation> getAllReservations() {
@@ -76,5 +92,29 @@ public class ReservationService {
         } catch (IllegalArgumentException e) {
             throw new Exception(e.getMessage());
         }
+    }
+
+    @Transactional
+    public void cancelReservation(Long id, CancellerType cancellerType) throws InstanceNotFoundException {
+        Reservation reservation = this.getReservationById(id).orElseThrow(InstanceNotFoundException::new);
+        if (cancellerType == CancellerType.GUEST) {
+            // TODO: check if can be cancelled
+            reservation.setStatus(ReservationStatus.CANCELLED_BY_GUEST.toString());
+            refundServiceClient.refundGuest(id);
+        } else if (cancellerType == CancellerType.OWNER) {
+            reservation.setStatus(ReservationStatus.CANCELLED_BY_OWNER.toString());
+            refundServiceClient.refundGuest(id);
+            if(daysUntilStay(reservation.getCheckInDate()) <= 30) {
+                refundServiceClient.refundAdditionalCompensation(id);
+            }
+
+            recommendationServiceClient.sendRecommendationEmail(reservation.getGuestEmail());
+        }
+        ReservationCancelledEvent event = new ReservationCancelledEvent(id, cancellerType.toString());
+        // producer.sendCancellationEvent(event); póki co nikt nie nasłuchuje, więc nie ma sensu tego wysyłać
+    }
+
+    private long daysUntilStay(LocalDate checkInDate) {
+        return ChronoUnit.DAYS.between(LocalDate.now(), checkInDate);
     }
 }
