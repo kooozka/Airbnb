@@ -9,6 +9,8 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
     ports:
       - "2181:2181"
+    networks:
+      - krakend-net
 
   kafka:
     image: confluentinc/cp-kafka:7.3.0
@@ -19,8 +21,10 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - krakend-net
   # KrakenD API Gateway
   krakend:
     image: devopsfaith/krakend:latest
@@ -47,3 +51,15 @@ services:
     restart: always
     networks:
       - krakend-net
+  payment-service:
+    build:
+      context: ./payment-service
+      dockerfile: Dockerfile
+    container_name: payment-service
+    ports:
+      - "8083:8083"
+    restart: always
+    networks:
+      - krakend-net
+    depends_on:
+      - kafka
