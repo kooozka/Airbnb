@@ -4,6 +4,7 @@ import com.rental.reservation.enums.CancellerType;
 import com.rental.reservation.enums.ReservationStatus;
 import com.rental.reservation.model.Reservation;
 import com.rental.reservation.producer.ReservationEventsProducer;
+import com.airbnb.events.ReservationCreatedEvent;
 import com.rental.room.model.Room;
 import com.rental.reservation.repository.ReservationRepository;
 import com.rental.room.repository.RoomRepository;
@@ -87,7 +88,21 @@ public class ReservationService {
             reservation.setRoom(room);
             reservation.calculateTotalPrice();
             
-            return reservationRepository.save(reservation);
+            Reservation savedReservation = reservationRepository.save(reservation);
+
+            // Send ReservationCreatedEvent to Kafka
+            ReservationCreatedEvent event = new ReservationCreatedEvent(
+                savedReservation.getId(),
+                room.getId(),
+                savedReservation.getGuestName(),
+                savedReservation.getGuestEmail(),
+                savedReservation.getCheckInDate(),
+                savedReservation.getCheckOutDate(),
+                savedReservation.getTotalPrice()
+            );
+            producer.sendReservationCreatedEvent(event);
+
+            return savedReservation;
             
         } catch (IllegalArgumentException e) {
             throw new Exception(e.getMessage());
