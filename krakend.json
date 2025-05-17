@@ -133,6 +133,34 @@
           "input_query_strings": ["checkIn", "checkOut"]
         }
       ]
+    },
+    {
+      "endpoint": "/listings/add",
+      "method": "POST",
+      "output_encoding": "json",
+      "input_headers": ["Content-Type"],
+      "backend": [
+        {
+          "url_pattern": "/api/listings",
+          "host": ["http://listing-service:8082"],
+          "encoding": "json",
+          "method": "POST"
+        }
+      ]
+    },
+    {      
+      "endpoint": "/ratings/listings",
+      "method": "GET",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/api/ratings/listings/all",
+          "host": ["http://rating-service:8085"],
+          "encoding": "json",
+          "method": "GET",
+          "is_collection": true
+        }
+      ]
     }
   ]
 }

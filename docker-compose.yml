@@ -63,3 +63,27 @@ services:
       - krakend-net
     depends_on:
       - kafka
+  listing-service:
+    build:
+      context: ./listing-service
+      dockerfile: ./Dockerfile
+    container_name: listing-service
+    ports:
+      - "8082:8082"
+    restart: "always"
+    networks:
+      - krakend-net
+    depends_on:
+      - kafka
+  rating-service:
+    build:
+      context: ./rating-service
+      dockerfile: Dockerfile
+    container_name: rating-service
+    ports:
+      - "8085:8085"
+    restart: always
+    networks:
+      - krakend-net
+    depends_on:
+      - kafka
