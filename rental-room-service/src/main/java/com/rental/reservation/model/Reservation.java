@@ -35,6 +35,7 @@ public class Reservation {
     private LocalDate checkOutDate;
     private String status; // to docelowo zamienimy na enum (PENDING, CONFIRMED, CANCELED, COMPLETED)
     private Double totalPrice;
+    private String payuOrderId;
     
     public void calculateTotalPrice() {
         if (room != null && checkInDate != null && checkOutDate != null) {

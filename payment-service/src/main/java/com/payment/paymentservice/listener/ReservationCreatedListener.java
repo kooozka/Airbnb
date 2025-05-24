@@ -1,7 +1,9 @@
 package com.payment.paymentservice.listener;
 
+import com.airbnb.events.PaymentCreatedEvent;
 import com.airbnb.events.ReservationCreatedEvent;
 import com.payment.paymentservice.model.Payment;
+import com.payment.paymentservice.producer.PaymentEventsProducer;
 import com.payment.paymentservice.repository.PaymentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +21,7 @@ import java.util.Map;
 public class ReservationCreatedListener {
     private static final Logger logger = LoggerFactory.getLogger(ReservationCreatedListener.class);
     private final PaymentRepository paymentRepository;
+    private final PaymentEventsProducer paymentEventsProducer;
 
     @Value("${payu.client_id}")
     private String clientId;
@@ -31,8 +34,9 @@ public class ReservationCreatedListener {
     @Value("${payu.order_url}")
     private String orderUrl;
 
-    public ReservationCreatedListener(PaymentRepository paymentRepository) {
+    public ReservationCreatedListener(PaymentRepository paymentRepository, PaymentEventsProducer paymentEventsProducer) {
         this.paymentRepository = paymentRepository;
+        this.paymentEventsProducer = paymentEventsProducer;
     }
 
     @KafkaListener(topics = "reservation-created", groupId = "payment-group")
@@ -83,6 +87,8 @@ public class ReservationCreatedListener {
                         .build();
                 paymentRepository.save(newOrder);
                 logger.info("Wygenerowano link do płatności PayU: {}", paymentResponse.get("redirectUri"));
+                PaymentCreatedEvent paymentCreatedEvent = new PaymentCreatedEvent(event.getReservationId(), payuOrderId);
+                paymentEventsProducer.sendPaymentCreationEvent(paymentCreatedEvent);
             } else {
                 logger.error("Błąd podczas tworzenia płatności PayU");
             }

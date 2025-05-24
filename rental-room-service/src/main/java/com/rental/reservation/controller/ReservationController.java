@@ -15,6 +15,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static com.rental.reservation.enums.ReservationStatus.PENDING;
+
 @RestController
 @RequestMapping("/api/reservations")
 public class ReservationController {
@@ -50,11 +52,12 @@ public class ReservationController {
             @RequestBody ReservationCreateDTO reservationDTO) {
         try {
             Reservation reservation = Reservation.builder()
-                .guestName(reservationDTO.getGuestName())
-                .guestEmail(reservationDTO.getGuestEmail())
-                .checkInDate(reservationDTO.getCheckInDate())
-                .checkOutDate(reservationDTO.getCheckOutDate())
-                .build();
+                    .guestName(reservationDTO.getGuestName())
+                    .guestEmail(reservationDTO.getGuestEmail())
+                    .checkInDate(reservationDTO.getCheckInDate())
+                    .checkOutDate(reservationDTO.getCheckOutDate())
+                    .status(PENDING.toString())
+                    .build();
             
             Reservation createdReservation = reservationService.createReservation(roomId, reservation);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdReservation);
@@ -77,9 +80,11 @@ public class ReservationController {
     }
 
     @PostMapping("/cancel/{id}")
-    public ResponseEntity<Long> cancelReservation(@PathVariable Long id, @RequestParam CancellerType cancellerType) throws InstanceNotFoundException {
+    public ResponseEntity<?> cancelReservation(@PathVariable Long id, @RequestParam CancellerType cancellerType) throws InstanceNotFoundException {
         reservationService.cancelReservation(id, cancellerType);
-        return ResponseEntity.ok(id);
+        return ResponseEntity.ok().body(
+                new CancelResponse(id, cancellerType.toString())
+        );
     }
 
     @Getter
@@ -94,6 +99,17 @@ public class ReservationController {
             this.checkIn = checkIn;
             this.checkOut = checkOut;
             this.available = available;
+        }
+    }
+
+    @Getter
+    private static class CancelResponse {
+        private final Long reservationId;
+        private final String cancellerType;
+
+        public CancelResponse(Long reservationId, String cancellerType) {
+            this.reservationId = reservationId;
+            this.cancellerType = cancellerType;
         }
 
     }

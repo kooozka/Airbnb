@@ -14,7 +14,7 @@ public class ReservationEventsProducer {
   private final KafkaTemplate<String, ReservationCreatedEvent> reservationCreatedEventKafkaTemplate;
 
   public void sendCancellationEvent(ReservationCancelledEvent event) {
-    reservationCancelledEventKafkaTemplate.send("cancellation-created", event.getReservationId().toString(), event);
+    reservationCancelledEventKafkaTemplate.send("reservation-cancelled", event.getReservationId().toString(), event);
     System.out.println("Kafka sent event: " + event);
   }
 

@@ -1,19 +1,19 @@
 package com.airbnb.events;
 
 import com.airbnb.enums.CancellerType;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ReservationCancelledEvent {
   private Long reservationId;
-  private Instant cancelledAt;
-  private CancellerType cancelledBy;
+  private String cancelledBy;
+  private String payuOrderId;
+  private double amount;
 
-  public ReservationCancelledEvent(Long id, String cancelledBy){
-    this.reservationId = id;
-    this.cancelledAt = Instant.now();
-    this.cancelledBy = CancellerType.valueOf(cancelledBy);
-  }
 }

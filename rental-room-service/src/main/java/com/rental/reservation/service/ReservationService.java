@@ -115,17 +115,18 @@ public class ReservationService {
         if (cancellerType == CancellerType.GUEST) {
             // TODO: check if can be cancelled
             reservation.setStatus(ReservationStatus.CANCELLED_BY_GUEST.toString());
-            refundServiceClient.refundGuest(id);
+            refundServiceClient.refundGuest(reservation);
         } else if (cancellerType == CancellerType.OWNER) {
             reservation.setStatus(ReservationStatus.CANCELLED_BY_OWNER.toString());
-            refundServiceClient.refundGuest(id);
+            refundServiceClient.refundGuest(reservation);
             if(daysUntilStay(reservation.getCheckInDate()) <= 30) {
-                refundServiceClient.refundAdditionalCompensation(id);
+                refundServiceClient.refundAdditionalCompensation(reservation);
             }
 
             recommendationServiceClient.sendRecommendationEmail(reservation.getGuestEmail());
         }
-        ReservationCancelledEvent event = new ReservationCancelledEvent(id, cancellerType.toString());
+        //RACZEJ NIEPOTRZEBNE - obsluzone w recommendationServiceClient
+        //ReservationCancelledEvent event = new ReservationCancelledEvent(id, cancellerType.toString());
         // producer.sendCancellationEvent(event); póki co nikt nie nasłuchuje, więc nie ma sensu tego wysyłać
     }
 

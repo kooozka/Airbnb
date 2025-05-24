@@ -120,17 +120,7 @@
           "url_pattern": "/api/reservations/room/{id}/availability",
           "host": ["http://rental-room-service:8081"],
           "encoding": "json",
-          "method": "GET",
-          "group": "availability",
-          "mapping": {
-            "checkIn": "$.checkIn",
-            "checkOut": "$.checkOut"
-          },
-          "deny": [
-            "checkIn",
-            "checkOut"
-          ],
-          "input_query_strings": ["checkIn", "checkOut"]
+          "method": "GET"
         }
       ]
     },
@@ -159,6 +149,62 @@
           "encoding": "json",
           "method": "GET",
           "is_collection": true
+        }
+      ]
+    },
+    {      
+      "endpoint": "/payments/status",
+      "method": "GET",
+      "output_encoding": "json",
+      "input_query_strings": ["paymentId", "reservationId"],
+      "backend": [
+        {
+          "url_pattern": "/api/payments/status",
+          "host": ["http://payment-service:8083"],
+          "encoding": "json",
+          "method": "GET"
+        }
+      ]
+    },
+    {      
+      "endpoint": "/reservations/cancel/{id}",
+      "method": "POST",
+      "output_encoding": "json",
+      "input_query_strings": ["cancellerType"],
+      "backend": [
+        {
+          "url_pattern": "/api/reservations/cancel/{id}",
+          "host": ["http://rental-room-service:8081"],
+          "encoding": "json",
+          "method": "POST"
+        }
+      ]
+    },
+    {      
+      "endpoint": "/payments/refund/status",
+      "method": "GET",
+      "output_encoding": "json",
+      "input_query_strings": ["orderId", "refundId"],
+      "backend": [
+        {
+          "url_pattern": "/api/payments/refund/status",
+          "host": ["http://payment-service:8083"],
+          "encoding": "json",
+          "method": "GET"
+        }
+      ]
+    },
+    {      
+      "endpoint": "/payments/refund",
+      "method": "POST",
+      "output_encoding": "json",
+      "input_query_strings": ["orderId"],
+      "backend": [
+        {
+          "url_pattern": "/api/payments/refund",
+          "host": ["http://payment-service:8083"],
+          "encoding": "json",
+          "method": "POST"
         }
       ]
     }

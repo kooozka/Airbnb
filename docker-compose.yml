@@ -63,6 +63,7 @@ services:
       - krakend-net
     depends_on:
       - kafka
+      - zookeeper
   listing-service:
     build:
       context: ./listing-service
