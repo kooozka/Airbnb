@@ -1,0 +1,10 @@
+package com.complaint.model;
+
+public enum ComplaintStatus {
+  SUBMITTED,
+  VERIFIED,
+  WAITING_FOR_EXPLANATION,
+  EXPLANATION_RECEIVED,
+  RESOLVED_ACCEPTED,
+  RESOLVED_REJECTED
+}
