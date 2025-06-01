@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RequestMapping("/api/listings")
 @RestController
 public class ListingController {
@@ -26,9 +28,13 @@ public class ListingController {
   }
 
   @PostMapping
-  public ResponseEntity<Long> createListing(@RequestBody ListingCreateDto dto) {
+  public ResponseEntity<?> createListing(@RequestBody ListingCreateDto dto) {
     Long id = listingService.createListing(dto);
-    return ResponseEntity.status(HttpStatus.CREATED).body(id);
+    return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+            "id", id,
+            "status", "created",
+            "message", "Listing utworzony pomyślnie"
+    ));
   }
 
   @GetMapping("/{id}")

@@ -31,7 +31,7 @@ services:
   # KrakenD API Gateway
   krakend:
     image: devopsfaith/krakend:latest
-    container_name: krakend
+    #container_name: krakend
     volumes:
       - ./krakend.json:/etc/krakend/krakend.json
     ports:
@@ -48,7 +48,7 @@ services:
     build:
       context: ./rental-room-service
       dockerfile: Dockerfile
-    container_name: rental-room-service
+    #container_name: rental-room-service
     ports:
       - "8081:8081"
     restart: always
@@ -60,7 +60,7 @@ services:
     build:
       context: ./payment-service
       dockerfile: Dockerfile
-    container_name: payment-service
+    #container_name: payment-service
     ports:
       - "8083:8083"
     restart: always
@@ -73,7 +73,7 @@ services:
     build:
       context: ./listing-service
       dockerfile: ./Dockerfile
-    container_name: listing-service
+    #container_name: listing-service
     ports:
       - "8082:8082"
     restart: "always"
@@ -85,7 +85,7 @@ services:
     build:
       context: ./rating-service
       dockerfile: Dockerfile
-    container_name: rating-service
+    #container_name: rating-service
     ports:
       - "8085:8085"
     restart: always
@@ -97,7 +97,7 @@ services:
     build:
       context: ./complaint-service
       dockerfile: ./Dockerfile
-    container_name: complaint-service
+    #container_name: complaint-service
     ports:
       - "8086:8086"
     restart: "always"
@@ -109,7 +109,7 @@ services:
     build:
       context: ./notification-service
       dockerfile: ./Dockerfile
-    container_name: notification-service
+    #container_name: notification-service
     ports:
       - "8087:8087"
     restart: "always"

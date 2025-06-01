@@ -4,7 +4,7 @@
   "name": "Airbnb API Gateway",
   "port": 8000,
   "cache_ttl": "300s",
-  "timeout": "3000ms",
+  "timeout": "10s",
   "extra_config": {
     "telemetry/logging": {
       "level": "DEBUG",
