@@ -125,6 +125,20 @@
       ]
     },
     {
+      "endpoint": "/reservations/cancel/{id}",
+      "method": "POST",
+      "output_encoding": "json",
+      "input_query_strings": ["cancellerType"],
+      "backend": [
+        {
+          "url_pattern": "/api/reservations/cancel/{id}",
+          "host": ["http://rental-room-service:8081"],
+          "encoding": "json",
+          "method": "POST"
+        }
+      ]
+    },
+    {
       "endpoint": "/listings/add",
       "method": "POST",
       "output_encoding": "json",
@@ -135,6 +149,46 @@
           "host": ["http://listing-service:8082"],
           "encoding": "json",
           "method": "POST"
+        }
+      ]
+    },
+    {
+      "endpoint": "/listings/{id}",
+      "method": "GET",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/api/listings/{id}",
+          "host": ["http://listing-service:8082"],
+          "encoding": "json",
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "endpoint": "/listings/{id}",
+      "method": "PUT",
+      "input_headers": ["Content-Type"],
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/api/listings/{id}",
+          "host": ["http://listing-service:8082"],
+          "encoding": "json",
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "endpoint": "/listings/{id}",
+      "method": "DELETE",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/api/listings/{id}",
+          "host": ["http://listing-service:8082"],
+          "encoding": "json",
+          "method": "DELETE"
         }
       ]
     },
@@ -167,20 +221,6 @@
       ]
     },
     {      
-      "endpoint": "/reservations/cancel/{id}",
-      "method": "POST",
-      "output_encoding": "json",
-      "input_query_strings": ["cancellerType"],
-      "backend": [
-        {
-          "url_pattern": "/api/reservations/cancel/{id}",
-          "host": ["http://rental-room-service:8081"],
-          "encoding": "json",
-          "method": "POST"
-        }
-      ]
-    },
-    {      
       "endpoint": "/payments/refund/status",
       "method": "GET",
       "output_encoding": "json",
@@ -203,6 +243,85 @@
         {
           "url_pattern": "/api/payments/refund",
           "host": ["http://payment-service:8083"],
+          "encoding": "json",
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "endpoint": "/complaints",
+      "method": "POST",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/complaints",
+          "host": ["http://complaint-service:8086"],
+          "encoding": "json",
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "endpoint": "/complaints",
+      "method": "GET",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/complaints",
+          "host": ["http://complaint-service:8086"],
+          "encoding": "json",
+          "method": "GET",
+          "is_collection": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/complaints/{id}",
+      "method": "GET",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/complaints/{id}",
+          "host": ["http://complaint-service:8086"],
+          "encoding": "json",
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "endpoint": "/complaints/{id}/request-explanation",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/complaints/{id}/request-explanation",
+          "host": ["http://complaint-service:8086"],
+          "encoding": "json",
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "endpoint": "/complaints/{id}/explanation",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/complaints/{id}/explanation",
+          "host": ["http://complaint-service:8086"],
+          "encoding": "json",
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "endpoint": "/complaints/{id}/resolve",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/complaints/{id}/resolve",
+          "host": ["http://complaint-service:8086"],
           "encoding": "json",
           "method": "POST"
         }

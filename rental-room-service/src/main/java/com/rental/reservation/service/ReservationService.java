@@ -113,9 +113,10 @@ public class ReservationService {
     public void cancelReservation(Long id, CancellerType cancellerType) throws InstanceNotFoundException {
         Reservation reservation = this.getReservationById(id).orElseThrow(InstanceNotFoundException::new);
         if (cancellerType == CancellerType.GUEST) {
-            // TODO: check if can be cancelled
             reservation.setStatus(ReservationStatus.CANCELLED_BY_GUEST.toString());
-            refundServiceClient.refundGuest(reservation);
+            if (daysUntilStay(reservation.getCheckInDate()) <= 30) {
+                refundServiceClient.refundGuest(reservation);
+            }
         } else if (cancellerType == CancellerType.OWNER) {
             reservation.setStatus(ReservationStatus.CANCELLED_BY_OWNER.toString());
             refundServiceClient.refundGuest(reservation);
@@ -125,9 +126,6 @@ public class ReservationService {
 
             recommendationServiceClient.sendRecommendationEmail(reservation.getGuestEmail());
         }
-        //RACZEJ NIEPOTRZEBNE - obsluzone w recommendationServiceClient
-        //ReservationCancelledEvent event = new ReservationCancelledEvent(id, cancellerType.toString());
-        // producer.sendCancellationEvent(event); póki co nikt nie nasłuchuje, więc nie ma sensu tego wysyłać
     }
 
     private long daysUntilStay(LocalDate checkInDate) {
