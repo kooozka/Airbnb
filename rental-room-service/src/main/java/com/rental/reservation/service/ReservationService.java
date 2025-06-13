@@ -52,18 +52,7 @@ public class ReservationService {
     }
 
     public boolean isRoomAvailable(Long roomId, LocalDate checkInDate, LocalDate checkOutDate) {
-        if (checkInDate == null || checkOutDate == null) {
-            throw new IllegalArgumentException("Daty zameldowania i wymeldowania są wymagane");
-        }
-        
-        if (checkInDate.isAfter(checkOutDate) || checkInDate.isEqual(checkOutDate)) {
-            throw new IllegalArgumentException("Data zameldowania musi być wcześniejsza niż data wymeldowania");
-        }
-
-        boolean roomExists = roomRepository.existsById(roomId);
-        if (!roomExists) {
-            throw new IllegalArgumentException("Pokój o ID " + roomId + " nie istnieje");
-        }
+        validateAvailabilityParameters(roomId, checkInDate, checkOutDate);
 
         List<Reservation> conflictingReservations = reservationRepository
                 .findActiveReservationsForRoomInPeriod(roomId, checkInDate, checkOutDate);
@@ -72,26 +61,27 @@ public class ReservationService {
     }
 
     @Transactional
-    public Reservation createReservation(Long roomId, Reservation reservation) throws Exception {
-        try {
-            LocalDate checkIn = reservation.getCheckInDate();
-            LocalDate checkOut = reservation.getCheckOutDate();
-            
-            boolean isAvailable = isRoomAvailable(roomId, checkIn, checkOut);
-            if (!isAvailable) {
-                throw new Exception("Pokój jest już zarezerwowany w podanym terminie");
-            }
-            
-            Optional<Room> roomOptional = roomRepository.findById(roomId);
-            Room room = roomOptional.get();
-            
-            reservation.setRoom(room);
-            reservation.calculateTotalPrice();
-            
-            Reservation savedReservation = reservationRepository.save(reservation);
+    public Reservation createReservation(Long roomId, Reservation reservation) {
+        LocalDate checkIn = reservation.getCheckInDate();
+        LocalDate checkOut = reservation.getCheckOutDate();
 
-            // Send ReservationCreatedEvent to Kafka
-            ReservationCreatedEvent event = new ReservationCreatedEvent(
+        validateReservationDates(checkIn, checkOut);
+        validateRoomExists(roomId);
+
+        if (!isRoomAvailable(roomId, checkIn, checkOut)) {
+            throw new IllegalArgumentException("Pokój jest już zarezerwowany w podanym terminie");
+        }
+
+        Optional<Room> roomOptional = roomRepository.findById(roomId);
+        Room room = roomOptional.get();
+
+        reservation.setRoom(room);
+        reservation.calculateTotalPrice();
+
+        Reservation savedReservation = reservationRepository.save(reservation);
+
+        // Send ReservationCreatedEvent to Kafka
+        ReservationCreatedEvent event = new ReservationCreatedEvent(
                 savedReservation.getId(),
                 room.getId(),
                 savedReservation.getGuestName(),
@@ -99,14 +89,10 @@ public class ReservationService {
                 savedReservation.getCheckInDate(),
                 savedReservation.getCheckOutDate(),
                 savedReservation.getTotalPrice()
-            );
-            producer.sendReservationCreatedEvent(event);
+        );
+        producer.sendReservationCreatedEvent(event);
 
-            return savedReservation;
-            
-        } catch (IllegalArgumentException e) {
-            throw new Exception(e.getMessage());
-        }
+        return savedReservation;
     }
 
     @Transactional
@@ -120,11 +106,38 @@ public class ReservationService {
         } else if (cancellerType == CancellerType.OWNER) {
             reservation.setStatus(ReservationStatus.CANCELLED_BY_OWNER.toString());
             refundServiceClient.refundGuest(reservation);
-            if(daysUntilStay(reservation.getCheckInDate()) <= 30) {
+            if (daysUntilStay(reservation.getCheckInDate()) <= 30) {
                 refundServiceClient.refundAdditionalCompensation(reservation);
             }
-
             recommendationServiceClient.sendRecommendationEmail(reservation.getGuestEmail());
+            reservationRepository.save(reservation);
+        }
+    }
+
+    private void validateAvailabilityParameters(Long roomId, LocalDate checkInDate, LocalDate checkOutDate) {
+        if (roomId <= 0) {
+            throw new IllegalArgumentException("Nieprawidłowe ID pokoju");
+        }
+        validateReservationDates(checkInDate, checkOutDate);
+    }
+
+    private void validateReservationDates(LocalDate checkInDate, LocalDate checkOutDate) {
+        if (checkInDate == null || checkOutDate == null) {
+            throw new IllegalArgumentException("Daty zameldowania i wymeldowania są wymagane");
+        }
+
+        if (checkInDate.isAfter(checkOutDate) || checkInDate.isEqual(checkOutDate)) {
+            throw new IllegalArgumentException("Data zameldowania musi być wcześniejsza niż data wymeldowania");
+        }
+
+        if (checkInDate.isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("Data zameldowania nie może być w przeszłości");
+        }
+    }
+
+    private void validateRoomExists(Long roomId) {
+        if (!roomRepository.existsById(roomId)) {
+            throw new IllegalArgumentException("Pokój o ID " + roomId + " nie istnieje");
         }
     }
 
