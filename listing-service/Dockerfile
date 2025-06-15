@@ -10,6 +10,8 @@ FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
+ENV JWT_SECRET = ""
+
 COPY --from=build /app/listing-service/target/*.jar app.jar
 
 EXPOSE 8082

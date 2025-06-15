@@ -21,6 +21,7 @@
       "endpoint": "/rooms",
       "method": "GET",
       "output_encoding": "json",
+      "input_headers": ["Authorization"],
       "backend": [
         {
           "url_pattern": "/api/rooms",
@@ -36,6 +37,7 @@
       "method": "GET",
       "input_query_strings": ["checkIn", "checkOut"],
       "output_encoding": "json",
+      "input_headers": ["Authorization"],
       "backend": [
         {          
           "url_pattern": "/api/rooms/available",
@@ -60,6 +62,7 @@
       "endpoint": "/reservations",
       "method": "GET",
       "output_encoding": "json",
+      "input_headers": ["Authorization"],
       "backend": [
         {          
           "url_pattern": "/api/reservations",
@@ -74,6 +77,7 @@
       "endpoint": "/reservations/{id}",
       "method": "GET",
       "output_encoding": "json",
+      "input_headers": ["Authorization"],
       "backend": [
         {          
           "url_pattern": "/api/reservations/{id}",
@@ -87,12 +91,14 @@
       "endpoint": "/reservations/room/{id}",
       "method": "GET",
       "output_encoding": "json",
+      "input_headers": ["Authorization"],
       "backend": [
         {
           "url_pattern": "/api/reservations/room/{id}",
           "host": ["http://rental-room-service:8081"],
           "encoding": "json",
-          "method": "GET"
+          "method": "GET",
+          "is_collection": true
         }
       ]
     },
@@ -100,7 +106,7 @@
       "endpoint": "/reservations/room/{id}",
       "method": "POST",
       "output_encoding": "json",
-      "input_headers": ["Content-Type"],
+      "input_headers": ["Content-Type", "Authorization"],
       "backend": [
         {
           "url_pattern": "/api/reservations/room/{id}",
@@ -115,6 +121,7 @@
       "method": "GET",
       "input_query_strings": ["checkIn", "checkOut"],
       "output_encoding": "json",
+      "input_headers": ["Authorization"],
       "backend": [
         {
           "url_pattern": "/api/reservations/room/{id}/availability",
@@ -128,6 +135,7 @@
       "endpoint": "/reservations/cancel/{id}",
       "method": "POST",
       "output_encoding": "json",
+      "input_headers": ["Authorization"],
       "input_query_strings": ["cancellerType"],
       "backend": [
         {
@@ -142,7 +150,7 @@
       "endpoint": "/listings/add",
       "method": "POST",
       "output_encoding": "json",
-      "input_headers": ["Content-Type"],
+      "input_headers": ["Content-Type", "Authorization"],
       "backend": [
         {
           "url_pattern": "/api/listings",
@@ -156,6 +164,7 @@
       "endpoint": "/listings/{id}",
       "method": "GET",
       "output_encoding": "json",
+      "input_headers": ["Authorization"],
       "backend": [
         {
           "url_pattern": "/api/listings/{id}",
@@ -168,7 +177,7 @@
     {
       "endpoint": "/listings/{id}",
       "method": "PUT",
-      "input_headers": ["Content-Type"],
+      "input_headers": ["Content-Type", "Authorization"],
       "output_encoding": "json",
       "backend": [
         {
@@ -183,6 +192,7 @@
       "endpoint": "/listings/{id}",
       "method": "DELETE",
       "output_encoding": "json",
+      "input_headers": ["Authorization"],
       "backend": [
         {
           "url_pattern": "/api/listings/{id}",
@@ -196,6 +206,7 @@
       "endpoint": "/ratings/listings",
       "method": "GET",
       "output_encoding": "json",
+      "input_headers": ["Authorization"],
       "backend": [
         {
           "url_pattern": "/api/ratings/listings/all",
@@ -210,6 +221,7 @@
       "endpoint": "/payments/status",
       "method": "GET",
       "output_encoding": "json",
+      "input_headers": ["Authorization"],
       "input_query_strings": ["paymentId", "reservationId"],
       "backend": [
         {
@@ -224,6 +236,7 @@
       "endpoint": "/payments/refund/status",
       "method": "GET",
       "output_encoding": "json",
+      "input_headers": ["Authorization"],
       "input_query_strings": ["orderId", "refundId"],
       "backend": [
         {
@@ -238,6 +251,7 @@
       "endpoint": "/payments/refund",
       "method": "POST",
       "output_encoding": "json",
+      "input_headers": ["Authorization"],
       "input_query_strings": ["orderId"],
       "backend": [
         {
@@ -252,6 +266,7 @@
       "endpoint": "/complaints",
       "method": "POST",
       "output_encoding": "json",
+      "input_headers": ["Authorization"],
       "backend": [
         {
           "url_pattern": "/complaints",
@@ -265,6 +280,7 @@
       "endpoint": "/complaints",
       "method": "GET",
       "output_encoding": "json",
+      "input_headers": ["Authorization"],
       "backend": [
         {
           "url_pattern": "/complaints",
@@ -279,6 +295,7 @@
       "endpoint": "/complaints/{id}",
       "method": "GET",
       "output_encoding": "json",
+      "input_headers": ["Authorization"],
       "backend": [
         {
           "url_pattern": "/complaints/{id}",
@@ -292,6 +309,7 @@
       "endpoint": "/complaints/{id}/request-explanation",
       "method": "POST",
       "output_encoding": "no-op",
+      "input_headers": ["Authorization"],
       "backend": [
         {
           "url_pattern": "/complaints/{id}/request-explanation",
@@ -305,6 +323,7 @@
       "endpoint": "/complaints/{id}/explanation",
       "method": "POST",
       "output_encoding": "no-op",
+      "input_headers": ["Authorization"],
       "backend": [
         {
           "url_pattern": "/complaints/{id}/explanation",
@@ -318,6 +337,7 @@
       "endpoint": "/complaints/{id}/resolve",
       "method": "POST",
       "output_encoding": "no-op",
+      "input_headers": ["Authorization"],
       "backend": [
         {
           "url_pattern": "/complaints/{id}/resolve",

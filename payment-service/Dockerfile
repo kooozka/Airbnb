@@ -11,6 +11,8 @@ FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
+ENV JWT_SECRET = ""
+
 COPY --from=build /app/payment-service/target/*.jar app.jar
 
 EXPOSE 8083
