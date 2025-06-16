@@ -56,7 +56,7 @@
    Niech ta klasa zawiera wszystkie atrybuty, które chcesz wysłać na Kafkę
    Przykładowa klasa: ListingCreatedEvent
 
-5. **Stwórz w module wysyłającym klasę (jeśli jeszcze nie istnieje) "...Producer"
+5. **Stwórz w module wysyłającym klasę (jeśli jeszcze nie istnieje) "...Producer"**
    W tej klasie utwórz metodę send...Event do wysyłania eventu na Kafkę. Event ten to event z shared-events!
    Jeden producer może zawierać wiele metod wysyłających eventy, ale można też mieć kilka producerów w jednym module.
    Wedle uznania trzeba je sensownie pogrupować.
@@ -68,5 +68,19 @@
    ale można też stworzyć wiele klas typu Listener, wedle uznania trzeba to sensownie podzielić
    Przykładowa klasa: ListingListener
 
-7. uruchom Dockera
+7. **Uruchom Dockera**
    Plik docker-compose.yml uruchamia Kafkę, w application.properties jest zdefiniowany port na którym zostanie uruchomiona (9092)
+
+# Jak uzyskać token JWT?
+1. **Otwórz w przeglądarce `localhost:8084/user`**
+2. **Zaloguj się przez Google**
+3. **Po zalogowaniu otwórz `localhost:8084/token` - powinno ci zwrócić JSON z tokenem JWT w środku**
+
+# Jak wgrać token do Postman?
+Żeby nie kopiować i wklejać tokena JWT do każdego requesta najlepiej stworzyć jeden folder w Postman, następnie do tego folderu w zakładce "Authorization" wybrać opcję "Bearer token", i wkleić tam token JWT. 
+
+![](images\Postman_2.png)
+
+Następnie requesty tworzyć w tym folderze - requesty wtedy będą dziedziczyć z rodzica (folderu) autoryzację (jest do domyślna opcja w Postman)
+
+![](images\Postman_1.png)
