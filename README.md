@@ -79,8 +79,8 @@
 # Jak wgrać token do Postman?
 Żeby nie kopiować i wklejać tokena JWT do każdego requesta najlepiej stworzyć jeden folder w Postman, następnie do tego folderu w zakładce "Authorization" wybrać opcję "Bearer token", i wkleić tam token JWT. 
 
-![](images\Postman_2.png)
+![](images/Postman_2.png)
 
 Następnie requesty tworzyć w tym folderze - requesty wtedy będą dziedziczyć z rodzica (folderu) autoryzację (jest do domyślna opcja w Postman)
 
-![](images\Postman_1.png)
+![](images/Postman_1.png)
