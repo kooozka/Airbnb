@@ -266,10 +266,10 @@
       "endpoint": "/complaints",
       "method": "POST",
       "output_encoding": "json",
-      "input_headers": ["Authorization"],
+      "input_headers": ["Content-Type" ,"Authorization"],
       "backend": [
         {
-          "url_pattern": "/complaints",
+          "url_pattern": "/api/complaints",
           "host": ["http://complaint-service:8086"],
           "encoding": "json",
           "method": "POST"
@@ -283,7 +283,7 @@
       "input_headers": ["Authorization"],
       "backend": [
         {
-          "url_pattern": "/complaints",
+          "url_pattern": "/api/complaints",
           "host": ["http://complaint-service:8086"],
           "encoding": "json",
           "method": "GET",
@@ -298,7 +298,7 @@
       "input_headers": ["Authorization"],
       "backend": [
         {
-          "url_pattern": "/complaints/{id}",
+          "url_pattern": "/api/complaints/{id}",
           "host": ["http://complaint-service:8086"],
           "encoding": "json",
           "method": "GET"
@@ -312,7 +312,7 @@
       "input_headers": ["Authorization"],
       "backend": [
         {
-          "url_pattern": "/complaints/{id}/request-explanation",
+          "url_pattern": "/api/complaints/{id}/request-explanation",
           "host": ["http://complaint-service:8086"],
           "encoding": "json",
           "method": "POST"
@@ -326,7 +326,7 @@
       "input_headers": ["Authorization"],
       "backend": [
         {
-          "url_pattern": "/complaints/{id}/explanation",
+          "url_pattern": "/api/complaints/{id}/explanation",
           "host": ["http://complaint-service:8086"],
           "encoding": "json",
           "method": "POST"
@@ -337,10 +337,10 @@
       "endpoint": "/complaints/{id}/resolve",
       "method": "POST",
       "output_encoding": "no-op",
-      "input_headers": ["Authorization"],
+      "input_headers": ["Content-Type", "Authorization"],
       "backend": [
         {
-          "url_pattern": "/complaints/{id}/resolve",
+          "url_pattern": "/api/complaints/{id}/resolve",
           "host": ["http://complaint-service:8086"],
           "encoding": "json",
           "method": "POST"

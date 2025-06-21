@@ -9,6 +9,7 @@ import com.rental.room.model.Room;
 import com.rental.reservation.repository.ReservationRepository;
 import com.rental.room.repository.RoomRepository;
 import com.airbnb.events.ReservationCancelledEvent;
+import com.rental.room.service.RoomService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -26,17 +27,19 @@ public class ReservationService {
     private final RefundServiceClient refundServiceClient;
     private final RecommendationServiceClient recommendationServiceClient;
     private final ReservationEventsProducer producer;
+    private final RoomService roomService;
 
     public ReservationService(ReservationRepository reservationRepository,
                               RoomRepository roomRepository,
                               RefundServiceClient refundServiceClient,
                               RecommendationServiceClient recommendationServiceClient,
-                              ReservationEventsProducer producer) {
+                              ReservationEventsProducer producer, RoomService roomService) {
         this.reservationRepository = reservationRepository;
         this.roomRepository = roomRepository;
         this.refundServiceClient = refundServiceClient;
         this.recommendationServiceClient = recommendationServiceClient;
         this.producer = producer;
+        this.roomService = roomService;
     }
 
     public List<Reservation> getAllReservations() {
@@ -109,7 +112,8 @@ public class ReservationService {
             if (daysUntilStay(reservation.getCheckInDate()) <= 30) {
                 refundServiceClient.refundAdditionalCompensation(reservation);
             }
-            recommendationServiceClient.sendRecommendationEmail(reservation.getGuestEmail());
+            List<Room> similarOffers = roomService.findAvailableRooms(reservation.getCheckInDate(), reservation.getCheckOutDate());
+            recommendationServiceClient.sendRecommendationEmail(reservation.getGuestEmail(), similarOffers);
             reservationRepository.save(reservation);
         }
     }
